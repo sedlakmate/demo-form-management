@@ -30,7 +30,7 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
     "@types/morgan": "^1.9.9",
-    "@types/node": "^20.11.24",
+    "@types/node": "^22.15.17",
     "@types/supertest": "^6.0.2",
     "esbuild": "^0.25.4",
     "esbuild-register": "^3.6.0",
