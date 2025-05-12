@@ -2,9 +2,9 @@ import ThemeSelector from "./theme-selector";
 
 export function Header() {
   return (
-    <header className="navbar bg-base-100 shadow">
+    <header className="navbar bg-base-200 shadow">
       <div className="flex-1 px-4 text-xl font-bold">🎵 Song Library Demo</div>
-      <ThemeSelector justifyEnd={false} />
+      <ThemeSelector justifyEnd={true} />
     </header>
   );
 }

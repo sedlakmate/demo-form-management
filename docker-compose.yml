@@ -31,6 +31,7 @@ services:
       - /app/node_modules
     environment:
       CHOKIDAR_USEPOLLING: "1"
+      NEXT_TELEMETRY_DISABLED: "1"
     ports:
       - "3001:3001"
     networks:
