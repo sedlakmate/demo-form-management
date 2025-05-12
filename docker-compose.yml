@@ -4,9 +4,17 @@ services:
     build:
       context: .
       dockerfile: apps/frontend/Dockerfile
+      target: dev
+    command: yarn workspace frontend dev
     restart: always
     ports:
       - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      CHOKIDAR_USEPOLLING: "1"
+      NEXT_TELEMETRY_DISABLED: "1"
     networks:
       - app_network
 
