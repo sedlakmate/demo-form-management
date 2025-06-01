@@ -19,7 +19,6 @@ COPY --from=builder /app/out/full/ .
 RUN chmod -R 777 /app/packages/logger
 
 # Build in order
-RUN yarn workspace @repo/logger build
 RUN yarn workspace backend build
 
 
