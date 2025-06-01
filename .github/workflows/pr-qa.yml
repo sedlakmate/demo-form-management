@@ -4,13 +4,46 @@ on:
   pull_request:
 
 jobs:
-  lint:
-    name: Lint Code
+  build:
+    name: Build All Packages
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build all packages
+        run: yarn build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            apps/**/dist
+            packages/**/dist
+            apps/**/.next
+
+  lint:
+    name: Lint Code
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -26,11 +59,16 @@ jobs:
 
   type-check:
     name: Type Checking
+    needs: build
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -46,11 +84,16 @@ jobs:
 
   unit-tests:
     name: Unit Tests
+    needs: build
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -66,11 +109,16 @@ jobs:
 
   build-verification:
     name: Build Verification
+    needs: build
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -85,7 +133,7 @@ jobs:
         run: yarn build
 
   docker-build:
-    name: Docker Build Verification
+    name: Docker Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
