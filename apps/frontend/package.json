@@ -10,7 +10,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "@repo/ui": "*",
     "@tailwindcss/postcss": "^4.1.6",
     "daisyui": "^5.0.35",
     "next": "^14.1.1",

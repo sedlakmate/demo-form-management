@@ -15,7 +15,6 @@
     "preset": "@repo/jest-presets/dist"
   },
   "dependencies": {
-    "@repo/logger": "*",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",

@@ -18,8 +18,6 @@ This Turborepo includes the following:
 
 - `frontend`: a [Next.js](https://nextjs.org/) app
 - `backend`: an [Express](https://expressjs.com/) server
-- `@repo/ui`: a React component library
-- `@repo/logger`: Isomorphic logger (a small wrapper around console.log)
 - `@repo/eslint-config`: ESLint presets
 - `@repo/typescript-config`: tsconfig.json's used throughout the monorepo
 - `@repo/jest-presets`: Jest configurations
