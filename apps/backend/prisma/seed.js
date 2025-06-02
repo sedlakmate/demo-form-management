@@ -1,6 +1,8 @@
-import { prisma } from "../src/prisma";
-import { randomUUID } from "crypto";
-import * as bcrypt from "bcrypt";
+const { PrismaClient } = require("@prisma/client");
+const { randomUUID } = require("crypto");
+const bcrypt = require("bcrypt");
+
+const prisma = new PrismaClient();
 
 async function main() {
   const password = await bcrypt.hash("admin123", 10);
@@ -14,7 +16,7 @@ async function main() {
     },
   });
 
-  const form = await prisma.form.create({
+  await prisma.form.create({
     data: {
       title: "Example Form",
       token: {
@@ -41,21 +43,7 @@ async function main() {
                   type: "NUMBER",
                   required: false,
                   order: 2,
-                  default: "18",
-                },
-              ],
-            },
-          },
-          {
-            title: "Feedback",
-            order: 2,
-            fields: {
-              create: [
-                {
-                  label: "Comment",
-                  type: "TEXT",
-                  required: false,
-                  order: 1,
+                  default: null,
                 },
               ],
             },
@@ -64,14 +52,14 @@ async function main() {
       },
     },
   });
-
-  console.log("Seeded form:", form);
 }
 
 main()
-  .then(() => prisma.$disconnect())
-  .catch(async (e) => {
+  .catch((e) => {
     console.error(e);
-    await prisma.$disconnect();
     process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
   });
+

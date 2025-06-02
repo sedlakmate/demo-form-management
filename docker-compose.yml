@@ -30,10 +30,12 @@ services:
       - /app/node_modules
     env_file:
       - apps/backend/.env
+    ports:
+      - "3001:3001"
     networks:
       - app_network
 
-  postgres:
+  db:
     image: postgres:15
     environment:
       POSTGRES_USER: postgres
@@ -46,4 +48,3 @@ services:
 
 networks:
   app_network:
-    driver: bridge

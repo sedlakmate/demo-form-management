@@ -1,6 +1,20 @@
 -- CreateEnum
 CREATE TYPE "FieldType" AS ENUM ('TEXT', 'NUMBER');
 
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('ADMIN', 'CLIENT');
+
+-- CreateTable
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "role" "Role" NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateTable
 CREATE TABLE "Form" (
     "id" TEXT NOT NULL,
@@ -61,6 +75,9 @@ CREATE TABLE "Response" (
 
     CONSTRAINT "Response_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Form_tokenId_key" ON "Form"("tokenId");

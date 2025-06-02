@@ -2,6 +2,7 @@ import { json, urlencoded } from "body-parser";
 import express, { type Express, Request, Response } from "express";
 import morgan from "morgan";
 import cors from "cors";
+import adminAuthRouter from "./routes/admin/auth";
 
 export const createServer = (): Express => {
   const app = express();
@@ -11,6 +12,7 @@ export const createServer = (): Express => {
     .use(urlencoded({ extended: true }))
     .use(json())
     .use(cors())
+    .use("/admin/auth", adminAuthRouter)
     .get("/message/:name", (req: Request, res: Response) => {
       res.json({ message: `hello ${req.params.name}` });
     })
