@@ -3,6 +3,8 @@ import express, { type Express, Request, Response } from "express";
 import morgan from "morgan";
 import cors from "cors";
 import adminAuthRouter from "./routes/admin/auth";
+import adminFormRouter from "./routes/admin/form";
+import publicFormRouter from "./routes/public/form";
 
 export const createServer = (): Express => {
   const app = express();
@@ -13,6 +15,8 @@ export const createServer = (): Express => {
     .use(json())
     .use(cors())
     .use("/admin/auth", adminAuthRouter)
+    .use("/admin/form", adminFormRouter)
+    .use("/public/form", publicFormRouter)
     .get("/status", (req: Request, res: Response) => {
       res.json({ ok: true });
     });

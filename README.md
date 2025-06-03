@@ -1,6 +1,6 @@
 # Admin Form Reap
 
-A form builder and submission full-stack app built with Next.js, Express, Prisma, and PostgreSQL.
+A form builder full-stack app built with Next.js, Express, Prisma, and PostgreSQL.
 
 ## Project Setup
 
