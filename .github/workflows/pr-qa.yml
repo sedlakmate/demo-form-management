@@ -4,10 +4,9 @@ on:
   pull_request:
 
 jobs:
-  lint:
-    name: Lint Code
+  setup:
+    name: Shared Setup
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,15 +18,32 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --immutable
+
+  lint:
+    name: Lint Code
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
 
       - name: Run lint
         run: yarn lint
 
   type-check:
     name: Type Checking
+    needs: setup
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -39,15 +55,15 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --immutable
 
       - name: Run TypeScript type check
         run: yarn type-check
 
   unit-tests:
     name: Unit Tests
+    needs: setup
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -59,15 +75,32 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --immutable
+
+      - name: Start Postgres container
+        run: docker compose up -d db
+
+      - name: Wait for database to be ready
+        run: |
+          for i in {1..4}; do
+            docker compose exec db pg_isready -U postgres && exit 0
+            echo "Waiting for database... ($i)"
+            sleep 5
+          done
+          echo "Database not ready after 4 attempts" >&2
+          docker compose logs db
+          exit 1
+
+      - name: Run DB migrations
+        run: npx dotenv-cli -e apps/backend/.env.ci -- yarn --cwd apps/backend prisma migrate deploy
 
       - name: Run unit tests
         run: yarn test
 
   build-verification:
     name: Build Verification
+    needs: setup
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -79,22 +112,20 @@ jobs:
           cache: 'yarn'
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --immutable
 
       - name: Verify build
         run: yarn build
 
   docker-build:
     name: Docker Build Verification
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Docker Compose
-        run: sudo apt-get install -y docker-compose
-
       - name: Build Docker images
         run: |
           docker network create app_network
-          COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose -f docker-compose.yml build
+          COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose -f docker-compose.yml build
