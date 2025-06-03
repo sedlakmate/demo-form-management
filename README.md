@@ -60,3 +60,10 @@ To run tests with the correct environment:
 ```sh
 turbo test
 ```
+
+### 9. All-in-one Check
+To run linting, type checking, and tests for all packages in one command:
+```sh
+turbo run check
+```
+

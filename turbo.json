@@ -25,6 +25,14 @@
     },
     "clean": {
       "cache": false
+    },
+    "check": {
+      "dependsOn": ["lint", "type-check", "test"],
+      "outputs": [],
+      "cache": false,
+      "persistent": false,
+      "inputs": ["$TURBO_DEFAULT$"],
+      "env": ["BACKEND_URL", "NEXT_PUBLIC_API_HOST"]
     }
   }
 }
