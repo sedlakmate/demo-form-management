@@ -34,7 +34,9 @@ docker-compose exec backend yarn prisma migrate dev --name init --schema=apps/ba
 ### 4. Reset the Database (Optional)
 To reset the main database (drops all data, reapplies all migrations, and runs the seed script):
 ```sh
-docker-compose exec backend yarn prisma migrate reset --schema=apps/backend/prisma/schema.prisma
+docker-compose exec backend yarn prisma migrate reset --schema=apps/backend/prisma/schema.prisma --force --skip-seed
+docker-compose exec db psql -U postgres -c "DROP DATABASE IF EXISTS db_test;"
+docker-compose exec db psql -U postgres -c "CREATE DATABASE db_test;"
 ```
 
 ### 5. Seed the Database (Optional)

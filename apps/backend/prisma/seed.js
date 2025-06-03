@@ -30,11 +30,6 @@ async function main() {
   const form = await prisma.form.create({
     data: {
       title: "Example Form",
-      token: {
-        create: {
-          value: randomUUID(),
-        },
-      },
       sections: {
         create: [
           {
