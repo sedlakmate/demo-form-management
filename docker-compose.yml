@@ -13,9 +13,8 @@ services:
       - .:/app
       - /app/node_modules
       - /app/apps/frontend/.next
-    environment:
-      CHOKIDAR_USEPOLLING: "1"
-      NEXT_TELEMETRY_DISABLED: "1"
+    env_file:
+      - apps/frontend/.env
     networks:
       - app_network
 
@@ -29,15 +28,23 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-    environment:
-      CHOKIDAR_USEPOLLING: "1"
-      NEXT_TELEMETRY_DISABLED: "1"
+    env_file:
+      - apps/backend/.env
     ports:
       - "3001:3001"
     networks:
       - app_network
 
-# Define a network, which allows containers to communicate
-# with each other, by using their container name as a hostname
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: db
+    ports:
+      - "5432:5432"
+    networks:
+      - app_network
+
 networks:
   app_network:

@@ -13,6 +13,7 @@ FROM base AS installer
 WORKDIR /app
 COPY --from=builder /app/out/json/ .
 RUN yarn install
+RUN yarn workspace backend prisma generate
 COPY --from=builder /app/out/full/ .
 
 # Fix write permissions
@@ -27,6 +28,7 @@ FROM base AS dev
 WORKDIR /app
 COPY . .
 RUN yarn install
+RUN yarn workspace backend prisma generate
 ENV NODE_ENV=development
 ENV CHOKIDAR_USEPOLLING=true
 CMD ["yarn", "workspace", "backend", "dev"]

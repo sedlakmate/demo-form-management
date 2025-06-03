@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum FieldType {
+  TEXT
+  NUMBER
+}
+
+enum Role {
+  ADMIN
+  CLIENT
+}
+
+model User {
+  id       String @id @default(cuid())
+  name     String
+  email    String @unique
+  password String
+  role     Role
+}
+
+model Form {
+  id          String       @id @default(cuid())
+  title       String
+  createdAt   DateTime     @default(now())
+  tokenId     String       @unique
+  token       Token        @relation("FormToken", fields: [tokenId], references: [id])
+  sections    Section[]    @relation("FormSections")
+  submissions Submission[]
+}
+
+model Section {
+  id       String   @id @default(cuid())
+  title    String
+  order    Int
+  form     Form     @relation("FormSections", fields: [formId], references: [id])
+  formId   String
+  fields   Field[]  @relation("SectionFields")
+}
+
+model Field {
+  id         String     @id @default(cuid())
+  label      String
+  type       FieldType
+  required   Boolean
+  order      Int
+  default    String?
+  section    Section    @relation("SectionFields", fields: [sectionId], references: [id])
+  sectionId  String
+  responses  Response[] @relation("FieldResponses")
+}
+
+model Token {
+  id        String   @id @default(cuid())
+  value     String   @unique
+  form      Form?    @relation("FormToken")
+  createdAt DateTime @default(now())
+}
+
+model Submission {
+  id         String       @id @default(cuid())
+  form       Form         @relation(fields: [formId], references: [id])
+  formId     String
+  createdAt  DateTime     @default(now())
+  responses  Response[]
+}
+
+model Response {
+  id            String     @id @default(cuid())
+  submission    Submission @relation(fields: [submissionId], references: [id])
+  submissionId  String
+  field         Field      @relation("FieldResponses", fields: [fieldId], references: [id])
+  fieldId       String
+  value         String
+}
