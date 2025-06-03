@@ -9,15 +9,21 @@
     "clean": "rm -rf dist",
     "type-check": "yarn tsc --noEmit",
     "lint": "tsc --noEmit && eslint \"src/**/*.ts*\" --max-warnings 0",
-    "test": "jest --detectOpenHandles",
+    "test:db:init": "yarn prisma:generate && yarn prisma:migrate --name test-init --skip-seed --preview-feature --schema=prisma/schema.prisma && yarn prisma:generate",
+    "test:db:reset": "yarn prisma migrate reset --force --skip-seed --schema=prisma/schema.prisma --preview-feature",
+    "test:prepare": "yarn test:db:init && yarn prisma:generate",
+    "test": "dotenv -e .env.test -- yarn test:prepare && dotenv -e .env.test -- jest --runInBand",
     "prisma:generate": "prisma generate",
     "seed": "prisma db seed",
-    "prisma:migrate": "prisma migrate dev",
+    "prisma:migrate": "prisma migrate dev --schema=prisma/schema.prisma",
     "prisma:studio": "prisma studio",
     "postinstall": "prisma generate"
   },
   "jest": {
-    "preset": "@repo/jest-presets/dist"
+    "preset": "@repo/jest-presets/dist",
+    "setupFiles": [
+      "<rootDir>/jest.setup.env.js"
+    ]
   },
   "dependencies": {
     "@prisma/client": "^6.8.2",
@@ -37,10 +43,12 @@
     "@types/body-parser": "^1.19.5",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.2",
+    "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.15.17",
     "@types/supertest": "^6.0.2",
+    "dotenv-cli": "^8.0.0",
     "esbuild": "^0.25.4",
     "esbuild-register": "^3.6.0",
     "eslint": "^8.57.0",

@@ -5,18 +5,29 @@ const bcrypt = require("bcrypt");
 const prisma = new PrismaClient();
 
 async function main() {
+  console.log("Seeding Prisma...");
+
   const password = await bcrypt.hash("admin123", 10);
 
-  await prisma.user.create({
-    data: {
+  console.log("Upserting admin user...");
+  const adminUser = await prisma.user.upsert({
+    where: { email: "admin@example.com" },
+    update: {
+      name: "Admin",
+      password,
+      role: "ADMIN",
+    },
+    create: {
       name: "Admin",
       email: "admin@example.com",
       password,
       role: "ADMIN",
     },
   });
+  console.log("Admin user upserted:", adminUser);
 
-  await prisma.form.create({
+  console.log("Creating example form...");
+  const form = await prisma.form.create({
     data: {
       title: "Example Form",
       token: {
@@ -52,6 +63,9 @@ async function main() {
       },
     },
   });
+  console.log("Example form created:", form);
+
+  console.log("Seeding completed successfully.");
 }
 
 main()
@@ -62,4 +76,3 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
-
