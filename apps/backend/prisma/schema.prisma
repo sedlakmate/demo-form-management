@@ -26,20 +26,18 @@ model User {
 }
 
 model Form {
-  id          String       @id @default(cuid())
-  title       String
-  createdAt   DateTime     @default(now())
-  tokenId     String       @unique
-  token       Token        @relation("FormToken", fields: [tokenId], references: [id], onDelete: Cascade) // TODO: Review if cascading delete is appropriate here
-  sections    Section[]    @relation("FormSections")
-  submissions Submission[]
+  id        String    @id @default(cuid())
+  title     String
+  createdAt DateTime  @default(now())
+  token     String    @unique @default(uuid())
+  sections  Section[] @relation("FormSections")
 }
 
 model Section {
   id     String  @id @default(cuid())
   title  String
   order  Int
-  form   Form    @relation("FormSections", fields: [formId], references: [id], onDelete: Cascade) // TODO: Review if cascading delete is appropriate here
+  form   Form    @relation("FormSections", fields: [formId], references: [id], onDelete: Cascade)
   formId String
   fields Field[] @relation("SectionFields")
 }
@@ -51,31 +49,14 @@ model Field {
   required  Boolean
   order     Int
   default   String?
-  section   Section    @relation("SectionFields", fields: [sectionId], references: [id], onDelete: Cascade) // TODO: Review if cascading delete is appropriate here
+  section   Section    @relation("SectionFields", fields: [sectionId], references: [id], onDelete: Cascade)
   sectionId String
   responses Response[] @relation("FieldResponses")
 }
 
-model Token {
-  id        String   @id @default(cuid())
-  value     String   @unique
-  form      Form?    @relation("FormToken")
-  createdAt DateTime @default(now())
-}
-
-model Submission {
-  id        String     @id @default(cuid())
-  form      Form       @relation(fields: [formId], references: [id], onDelete: Cascade) // TODO: Review if cascading delete is appropriate here
-  formId    String
-  createdAt DateTime   @default(now())
-  responses Response[]
-}
-
 model Response {
-  id           String     @id @default(cuid())
-  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade) // TODO: Review if cascading delete is appropriate here
-  submissionId String
-  field        Field      @relation("FieldResponses", fields: [fieldId], references: [id], onDelete: Cascade) // TODO: Review if cascading delete is appropriate here
-  fieldId      String
-  value        String
+  id      String @id @default(cuid())
+  field   Field  @relation("FieldResponses", fields: [fieldId], references: [id], onDelete: Cascade)
+  fieldId String
+  value   String
 }

@@ -1,28 +1,76 @@
-import { PrismaClient, Prisma, Form } from "@prisma/client";
+import { Form, Prisma, PrismaClient } from "@prisma/client";
+import { createSection } from "./sectionService";
+import { createField } from "./fieldService";
 
 const prisma = new PrismaClient();
 
-export type CreateFormInput = Prisma.FormCreateInput;
-export type UpdateFormInput = Prisma.FormUpdateInput;
+export type CreateFormWithSectionsInput = {
+  title: string;
+  sections: Array<{
+    title: string;
+    order: number;
+    fields?: Array<{
+      label: string;
+      type: "TEXT" | "NUMBER";
+      required: boolean;
+      order: number;
+      default?: string;
+    }>;
+  }>;
+};
 
-export type FormWithSectionsAndToken = Prisma.FormGetPayload<{
+export type FormWithSections = Prisma.FormGetPayload<{
   include: {
     sections: {
       include: {
         fields: true;
       };
     };
-    token: true;
   };
 }>;
 
-export async function createForm(data: CreateFormInput): Promise<Form> {
-  return prisma.form.create({ data });
+export async function createForm(
+  data: CreateFormWithSectionsInput,
+): Promise<FormWithSections> {
+  return prisma.$transaction(async (tx) => {
+    const form = await tx.form.create({
+      data: {
+        title: data.title,
+      },
+    });
+    for (const sectionData of data.sections) {
+      const section = await createSection(
+        {
+          title: sectionData.title,
+          order: sectionData.order,
+          form: { connect: { id: form.id } },
+        },
+        tx,
+      );
+      if (sectionData.fields) {
+        for (const fieldData of sectionData.fields) {
+          await createField(
+            {
+              ...fieldData,
+              section: { connect: { id: section.id } },
+            },
+            tx,
+          );
+        }
+      }
+    }
+    return tx.form.findUniqueOrThrow({
+      where: { id: form.id },
+      include: {
+        sections: {
+          include: { fields: true },
+        },
+      },
+    });
+  });
 }
 
-export async function getFormById(
-  id: string,
-): Promise<FormWithSectionsAndToken> {
+export async function getFormById(id: string): Promise<FormWithSections> {
   return prisma.form.findUniqueOrThrow({
     where: { id },
     include: {
@@ -31,18 +79,7 @@ export async function getFormById(
           fields: true,
         },
       },
-      token: true,
     },
-  });
-}
-
-export async function updateForm(
-  id: string,
-  data: UpdateFormInput,
-): Promise<Form> {
-  return prisma.form.update({
-    where: { id },
-    data,
   });
 }
 
@@ -50,7 +87,7 @@ export async function deleteForm(id: string): Promise<Form> {
   return prisma.form.delete({ where: { id } });
 }
 
-export async function listForms(): Promise<FormWithSectionsAndToken[]> {
+export async function listForms(): Promise<FormWithSections[]> {
   return prisma.form.findMany({
     include: {
       sections: {
@@ -58,7 +95,6 @@ export async function listForms(): Promise<FormWithSectionsAndToken[]> {
           fields: true,
         },
       },
-      token: true,
     },
   });
 }
