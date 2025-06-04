@@ -3,7 +3,6 @@ import { PrismaClient, Prisma, Section } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export type CreateSectionInput = Prisma.SectionCreateInput;
-export type UpdateSectionInput = Prisma.SectionUpdateInput;
 
 export async function createSection(
   data: CreateSectionInput,
@@ -14,13 +13,6 @@ export async function createSection(
 
 export async function getSectionById(id: string): Promise<Section | null> {
   return prisma.section.findUnique({ where: { id } });
-}
-
-export async function updateSection(
-  id: string,
-  data: UpdateSectionInput,
-): Promise<Section> {
-  return prisma.section.update({ where: { id }, data });
 }
 
 export async function deleteSection(id: string): Promise<Section> {

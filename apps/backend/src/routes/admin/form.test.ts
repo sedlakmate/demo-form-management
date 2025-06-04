@@ -96,21 +96,6 @@ describe("Admin Form API", () => {
     expect(res.body).toHaveProperty("id", form.id);
   });
 
-  it("should update a form", async () => {
-    const form = await prisma.form.create({
-      data: {
-        title: "Test Form",
-        sections: { create: [] },
-      },
-    });
-    const res = await request(app)
-      .put(`/admin/form/${form.id}`)
-      .set("Authorization", `Bearer ${adminToken}`)
-      .send({ title: "Updated Title" });
-    expect(res.status).toBe(200);
-    expect(res.body.title).toBe("Updated Title");
-  });
-
   it("should delete a form", async () => {
     const form = await prisma.form.create({
       data: {
@@ -119,7 +104,7 @@ describe("Admin Form API", () => {
       },
     });
     const res = await request(app)
-      .delete(`/admin/form/${form.id}`)
+      .delete(`/admin/form/${form.token}`)
       .set("Authorization", `Bearer ${adminToken}`);
     expect(res.status).toBe(200);
     expect(res.body.id).toBe(form.id);

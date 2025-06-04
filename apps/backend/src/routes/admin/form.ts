@@ -34,21 +34,17 @@ router.get(
   }),
 );
 
-// Update a form - INACTIVE FOR NOW
-router.put(
-  "/:id",
-  asyncHandler(async (req, res) => {
-    const form = await formService.updateForm(req.params.id, req.body);
-    res.json(form);
-  }),
-);
-
-// Delete a form - INACTIVE FOR NOW
+// Delete a form by token, only if it has no responses
 router.delete(
-  "/:id",
+  "/:token",
   asyncHandler(async (req, res) => {
-    const form = await formService.deleteForm(req.params.id);
-    res.json(form);
+    try {
+      const form = await formService.deleteFormByToken(req.params.token);
+      res.json(form);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      res.status(400).json({ error: err.message || "Failed to delete form" });
+    }
   }),
 );
 

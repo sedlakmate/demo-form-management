@@ -3,7 +3,6 @@ import { PrismaClient, Response, Prisma } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export type CreateResponseInput = Prisma.ResponseCreateInput;
-export type UpdateResponseInput = Prisma.ResponseUpdateInput;
 
 export async function createResponse(
   data: CreateResponseInput,
@@ -13,13 +12,6 @@ export async function createResponse(
 
 export async function getResponseById(id: string): Promise<Response | null> {
   return prisma.response.findUnique({ where: { id } });
-}
-
-export async function updateResponse(
-  id: string,
-  data: UpdateResponseInput,
-): Promise<Response> {
-  return prisma.response.update({ where: { id }, data });
 }
 
 export async function deleteResponse(id: string): Promise<Response> {
