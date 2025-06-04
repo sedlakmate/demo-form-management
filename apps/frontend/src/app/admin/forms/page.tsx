@@ -103,7 +103,7 @@ export default function AdminFormsPage() {
           {forms.map((form) => (
             <li
               key={form.id}
-              className="p-4 bg-base-100 rounded shadow flex items-center justify-between"
+              className="p-4 bg-base-200 rounded shadow flex items-center justify-between"
             >
               <div>
                 <div className="font-semibold text-lg">

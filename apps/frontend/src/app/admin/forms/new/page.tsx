@@ -153,7 +153,7 @@ export default function FormCraftingPage() {
           {sections.map((section) => (
             <div
               key={section.id}
-              className="mb-4 p-4 bg-base-100 rounded shadow"
+              className="mb-4 p-4 bg-base-200 rounded shadow"
             >
               <div className="mb-2 flex items-center justify-between">
                 <label className="block text-sm font-medium mb-1">

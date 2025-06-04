@@ -35,7 +35,12 @@ export function Header() {
   return (
     <header className="navbar bg-base-200 shadow">
       <div className="flex-1 px-4 text-xl font-bold">
-        Admin form management demo
+        <span
+          className="cursor-pointer hover:underline"
+          onClick={() => router.push("/admin/forms")}
+        >
+          Admin form management demo
+        </span>
       </div>
       {hasToken && (
         <button className="btn btn-ghost" onClick={handleLogout}>

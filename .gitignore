@@ -56,3 +56,4 @@ yarn-error.log*
 .turbo
 /challenge-description/**/*
 /apps/frontend/test-results/.last-run.json
+/apps/frontend/test-results/src-app-admin-login-login.-a6217-Login-should-login-as-admin/error-context.md
