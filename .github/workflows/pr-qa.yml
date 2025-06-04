@@ -16,8 +16,7 @@ jobs:
           node-version: 22
           cache: yarn
 
-      - name: Cache node_modules
-        uses: actions/cache@v3
+      - uses: actions/cache@v3
         with:
           path: |
             .yarn/cache
@@ -40,8 +39,7 @@ jobs:
           node-version: 22
           cache: yarn
 
-      - name: Cache node_modules
-        uses: actions/cache@v3
+      - uses: actions/cache@v3
         with:
           path: |
             .yarn/cache
@@ -64,8 +62,7 @@ jobs:
           node-version: 22
           cache: yarn
 
-      - name: Cache node_modules
-        uses: actions/cache@v3
+      - uses: actions/cache@v3
         with:
           path: |
             .yarn/cache
@@ -102,8 +99,7 @@ jobs:
           node-version: 22
           cache: yarn
 
-      - name: Cache node_modules
-        uses: actions/cache@v3
+      - uses: actions/cache@v3
         with:
           path: |
             .yarn/cache
@@ -116,5 +112,5 @@ jobs:
       - name: Run DB migrations
         run: npx dotenv-cli -e apps/backend/.env.ci -- yarn --cwd apps/backend prisma migrate deploy
 
-      - name: Run unit tests
+      - name: Run unit tests with coverage
         run: yarn test

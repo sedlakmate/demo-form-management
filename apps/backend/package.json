@@ -10,7 +10,7 @@
     "clean": "rm -rf dist",
     "lint": "eslint \"src/**/*.ts*\" --max-warnings 0",
     "type-check": "yarn tsc --noEmit",
-    "test": "dotenv -e .env.test -- yarn test:prepare && dotenv -e .env.test -- jest --runInBand",
+    "test": "dotenv -e .env.test -- yarn test:prepare && dotenv -e .env.test -- jest --runInBand --coverage",
     "test:db:init": "yarn prisma:generate && yarn prisma:migrate --name test-init --skip-seed --preview-feature && yarn prisma:generate",
     "test:db:reset": "yarn prisma migrate reset --force --skip-seed --preview-feature",
     "test:prepare": "yarn test:db:init && yarn prisma:generate",
