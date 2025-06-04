@@ -1,7 +1,10 @@
 # Admin Form Demo App
-[![CI](https://github.com/szedlakmate/demo-form-management/actions/workflows/ci.yml/badge.svg)](https://github.com/szedlakmate/demo-form-management/actions/workflows/pr-qa.yml)
+[![QA Workflow](https://github.com/szedlakmate/demo-form-management/actions/workflows/ci.yml/badge.svg)](https://github.com/szedlakmate/demo-form-management/actions/workflows/pr-qa.yml/badge.svg)
 
 A form builder full-stack app built with Next.js, Express, Prisma, and PostgreSQL.
+
+## Live Demo
+A live demo of the application is available at [https://demo-form-management-production.up.railway.app](https://demo-form-management-production.up.railway.app).
 
 ## Goal
 The goal of this project is to create a simple form builder application that allows an admin user to create forms with sections and fields, and a public user to fill out these forms without needing to log in.
@@ -67,25 +70,25 @@ docker-compose up -d
 ### 3. Run Database Migrations
 Run migrations inside the backend container to set up the database schema:
 ```sh
-docker-compose exec backend yarn prisma migrate dev --name init --schema=apps/backend/prisma/schema.prisma
+docker-compose exec backend yarn prisma migrate dev --name init
 ```
 
 ### 4. Generate the Prisma Client
 After running migrations, generate the Prisma client:
 ```sh
-docker-compose exec backend yarn prisma generate --schema=apps/backend/prisma/schema.prisma
+docker-compose exec backend yarn prisma generate
 ```
 
 ### 5. Seed the Database (Optional)
 To seed the main database manually, run:
 ```sh
-docker-compose exec backend yarn workspace backend prisma db seed --schema=apps/backend/prisma/schema.prisma
+docker-compose exec backend yarn workspace backend prisma db seed
 ```
 
 ### RESET THE DATABASE
 To reset the main database (drops all data, reapplies all migrations, and runs the seed script):
 ```sh
-docker-compose exec backend yarn prisma migrate reset --schema=apps/backend/prisma/schema.prisma --force
+docker-compose exec backend yarn prisma migrate reset --force --skip-seed
 docker-compose exec db psql -U postgres -c "DROP DATABASE IF EXISTS db_test;"
 docker-compose exec db psql -U postgres -c "CREATE DATABASE db_test;"
 ```
@@ -94,17 +97,6 @@ docker-compose exec db psql -U postgres -c "CREATE DATABASE db_test;"
 - Frontend: [http://localhost:3000](http://localhost:3000)
 - Backend API: [http://localhost:3001](http://localhost:3001)
 
-### 8. Running Tests
-To run tests with the correct environment:
-```sh
-turbo test
-```
-
-### 9. All-in-one Check
-To run linting, type checking, and tests for all packages in one command:
-```sh
-turbo run check
-```
 
 ## Database Credentials & Local Connection
 You can connect to the PostgreSQL database using the following credentials:
@@ -113,7 +105,20 @@ You can connect to the PostgreSQL database using the following credentials:
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/db?schema=public"
 ```
 
-## Automated Tests
+## QA & Tests
+
+### All-in-one Check
+To run linting, type checking, and unit tests for all packages in one command:
+```sh
+turbo check
+```
+Note that this **does not execute E2E tests**.
+
+### Linting and Type Checking
+To run linting, type checking, and tests for all packages in one command:
+```sh
+turbo lint
+```
 
 ### Unit Tests
 To run unit tests for the backend and frontend, use:
@@ -121,7 +126,7 @@ To run unit tests for the backend and frontend, use:
 turbo test
 ```
 
-### Playwright E2E in Docker
+### Playwright E2E Tests in Docker
 To run Playwright end-to-end tests using Docker Compose (recommended):
 
 ```sh

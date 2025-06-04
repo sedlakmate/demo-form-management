@@ -4,20 +4,21 @@
   "private": true,
   "scripts": {
     "dev": "nodemon --exec \"node -r esbuild-register ./src/index.ts\" -e .ts",
+    "db:prepare": "echo 'Preparing database...' && yarn prisma:migrate:deploy && yarn prisma:generate && yarn prisma:seed && echo 'Database preparation finished.'",
     "build": "tsc",
     "start": "node -r esbuild-register ./src/index.ts",
     "clean": "rm -rf dist",
+    "lint": "eslint \"src/**/*.ts*\" --max-warnings 0",
     "type-check": "yarn tsc --noEmit",
-    "lint": "tsc --noEmit && eslint \"src/**/*.ts*\" --max-warnings 0",
-    "test:db:init": "yarn prisma:generate && yarn prisma:migrate --name test-init --skip-seed --preview-feature --schema=prisma/schema.prisma && yarn prisma:generate",
-    "test:db:reset": "yarn prisma migrate reset --force --skip-seed --schema=prisma/schema.prisma --preview-feature",
+    "test": "dotenv -e .env.test -- yarn test:prepare && dotenv -e .env.test -- jest --runInBand --coverage",
+    "test:db:init": "yarn prisma:generate && yarn prisma:migrate --name test-init --skip-seed --preview-feature && yarn prisma:generate",
+    "test:db:reset": "yarn prisma migrate reset --force --skip-seed --preview-feature",
     "test:prepare": "yarn test:db:init && yarn prisma:generate",
-    "test": "dotenv -e .env.test -- yarn test:prepare && dotenv -e .env.test -- jest --runInBand",
     "prisma:generate": "prisma generate",
-    "seed": "prisma db seed",
-    "prisma:migrate": "prisma migrate dev --schema=prisma/schema.prisma",
+    "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
-    "postinstall": "prisma generate"
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "prisma:seed": "prisma db seed"
   },
   "jest": {
     "preset": "@repo/jest-presets/dist",
@@ -61,6 +62,7 @@
     "typescript": "5.8.3"
   },
   "prisma": {
+    "schema": "prisma/schema.prisma",
     "seed": "node prisma/seed.js"
   }
 }

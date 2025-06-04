@@ -9,21 +9,23 @@ RUN yarn global add turbo
 COPY . .
 RUN turbo prune backend --docker
 
+
+# ---- Installer stage ----
 FROM base AS installer
 WORKDIR /app
+
 COPY --from=builder /app/out/json/ .
-RUN yarn install
-RUN yarn workspace backend prisma generate
+
 COPY --from=builder /app/out/full/ .
 
-# Fix write permissions
-RUN chmod -R 777 /app/packages/logger
+RUN yarn install
 
-# Build in order
+RUN yarn workspace backend prisma generate
+
 RUN yarn workspace backend build
 
 
-# ---- Dev mode (used for local development with volumes) ----
+# ---- Dev mode (uses volumes) ----
 FROM base AS dev
 WORKDIR /app
 COPY . .
@@ -37,6 +39,7 @@ CMD ["yarn", "workspace", "backend", "dev"]
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=installer /app .
+ENV YARN_CACHE_FOLDER=/tmp/.yarn-cache
+COPY --from=installer --chown=1001:1001 /app .
 USER 1001
 CMD ["node", "apps/backend/dist/index.js"]

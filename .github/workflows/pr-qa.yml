@@ -4,128 +4,113 @@ on:
   pull_request:
 
 jobs:
-  setup:
-    name: Shared Setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
   lint:
     name: Lint Code
-    needs: setup
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'yarn'
+          cache: yarn
 
-      - name: Install dependencies
-        run: yarn install --immutable
+      - uses: actions/cache@v3
+        with:
+          path: |
+            .yarn/cache
+            .yarn/unplugged
+            node_modules
+          key: yarn-${{ hashFiles('yarn.lock') }}
 
-      - name: Run lint
-        run: yarn lint
+      - run: yarn install --immutable
+      - run: yarn lint
 
   type-check:
     name: Type Checking
-    needs: setup
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'yarn'
+          cache: yarn
 
-      - name: Install dependencies
-        run: yarn install --immutable
+      - uses: actions/cache@v3
+        with:
+          path: |
+            .yarn/cache
+            .yarn/unplugged
+            node_modules
+          key: yarn-${{ hashFiles('yarn.lock') }}
 
-      - name: Run TypeScript type check
-        run: yarn type-check
+      - run: yarn install --immutable
+      - run: yarn type-check
+
+  build-verification:
+    name: Build Verification
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            .yarn/cache
+            .yarn/unplugged
+            node_modules
+          key: yarn-${{ hashFiles('yarn.lock') }}
+
+      - run: yarn install --immutable
+      - run: yarn build
 
   unit-tests:
     name: Unit Tests
-    needs: setup
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    services:
+      db:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'yarn'
+          cache: yarn
 
-      - name: Install dependencies
-        run: yarn install --immutable
+      - uses: actions/cache@v3
+        with:
+          path: |
+            .yarn/cache
+            .yarn/unplugged
+            node_modules
+          key: yarn-${{ hashFiles('yarn.lock') }}
 
-      - name: Start Postgres container
-        run: docker compose up -d db
-
-      - name: Wait for database to be ready
-        run: |
-          for i in {1..4}; do
-            docker compose exec db pg_isready -U postgres && exit 0
-            echo "Waiting for database... ($i)"
-            sleep 5
-          done
-          echo "Database not ready after 4 attempts" >&2
-          docker compose logs db
-          exit 1
+      - run: yarn install --immutable
 
       - name: Run DB migrations
         run: npx dotenv-cli -e apps/backend/.env.ci -- yarn --cwd apps/backend prisma migrate deploy
 
-      - name: Run unit tests
+      - name: Run unit tests with coverage
         run: yarn test
-
-  build-verification:
-    name: Build Verification
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Verify build
-        run: yarn build
-
-  docker-build:
-    name: Docker Build Verification
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Build Docker images
-        run: |
-          docker network create app_network
-          COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose -f docker-compose.yml build
