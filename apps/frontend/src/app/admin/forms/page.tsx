@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 interface Form {
   id: string;
   title: string;
-  description?: string;
-  createdAt?: string;
+  token: string;
+  createdAt: string;
 }
 
 export default function AdminFormsPage() {
@@ -68,14 +68,20 @@ export default function AdminFormsPage() {
           {forms.length === 0 && <li>No forms found.</li>}
           {forms.map((form) => (
             <li key={form.id} className="p-4 bg-base-100 rounded shadow">
-              <div className="font-semibold text-lg">{form.title}</div>
+              <div className="font-semibold text-lg">
+                <a
+                  href={`/form/${form.token}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link link-primary"
+                >
+                  {form.title}
+                </a>
+              </div>
               {form.createdAt && (
                 <div className="text-xs text-gray-400 mb-1">
                   Created: {new Date(form.createdAt).toLocaleString()}
                 </div>
-              )}
-              {form.description && (
-                <div className="text-sm text-gray-500">{form.description}</div>
               )}
             </li>
           ))}
