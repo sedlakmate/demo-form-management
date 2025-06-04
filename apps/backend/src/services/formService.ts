@@ -32,6 +32,16 @@ export type FormWithSections = Prisma.FormGetPayload<{
 export async function createForm(
   data: CreateFormWithSectionsInput,
 ): Promise<FormWithSections> {
+  // Validation: must have at least one section
+  if (!data.sections || data.sections.length === 0) {
+    throw new Error("A form must have at least one section.");
+  }
+  // Validation: each section must have at least one field
+  for (const section of data.sections) {
+    if (!section.fields || section.fields.length === 0) {
+      throw new Error("Each section must have at least one field.");
+    }
+  }
   try {
     return await prisma.$transaction(async (tx) => {
       const form = await tx.form.create({

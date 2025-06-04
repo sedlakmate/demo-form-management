@@ -21,5 +21,11 @@ export const createServer = (): Express => {
       res.json({ ok: true });
     });
 
+  // Global error handler to always return JSON
+  app.use((err: any, req: Request, res: Response, next: Function) => {
+    const status = err.status || 500;
+    res.status(status).json({ error: err.message || "Internal Server Error" });
+  });
+
   return app;
 };
