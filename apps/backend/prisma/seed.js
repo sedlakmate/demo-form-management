@@ -54,6 +54,28 @@ async function main() {
               ],
             },
           },
+          {
+            title: "Contact Info",
+            order: 2,
+            fields: {
+              create: [
+                {
+                  label: "Email",
+                  type: "TEXT",
+                  required: true,
+                  order: 1,
+                  default: "",
+                },
+                {
+                  label: "Phone",
+                  type: "TEXT",
+                  required: false,
+                  order: 2,
+                  default: "",
+                },
+              ],
+            },
+          },
         ],
       },
     },
