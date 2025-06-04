@@ -25,6 +25,7 @@ services:
       dockerfile: apps/backend/Dockerfile
       target: dev
     command: yarn workspace backend dev
+    working_dir: /app/apps/backend
     volumes:
       - .:/app
       - /app/node_modules
@@ -60,7 +61,7 @@ services:
       - app_network
     volumes:
       - ./apps/frontend:/app/apps/frontend
-    command: ["npx", "playwright", "test"]
+    command: [ "npx", "playwright", "test" ]
 
 volumes:
   db_data:
