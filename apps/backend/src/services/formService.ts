@@ -88,11 +88,9 @@ export async function getFormById(id: string): Promise<FormWithSections> {
   });
 }
 
-export async function getFormByToken(
-  tokenId: string,
-): Promise<FormWithSections> {
+export async function getFormByToken(token: string): Promise<FormWithSections> {
   return prisma.form.findUniqueOrThrow({
-    where: { token: tokenId },
+    where: { token },
     include: {
       sections: {
         include: {

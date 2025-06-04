@@ -1,7 +1,10 @@
-export default function Web() {
-  return (
-    <div>
-      <h1>Hello world</h1>
-    </div>
-  );
+"use client";
+
+import { useEffect } from "react";
+
+export default function Home() {
+  useEffect(() => {
+    window.location.replace("/admin/login");
+  }, []);
+  return null;
 }
