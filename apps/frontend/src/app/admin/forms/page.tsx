@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface Form {
   id: string;
@@ -12,30 +13,50 @@ export default function AdminFormsPage() {
   const [forms, setForms] = useState<Form[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
-    async function fetchForms() {
-      setLoading(true);
-      setError("");
-      try {
-        const token = localStorage.getItem("admin-token");
-        const res = await fetch("/api/admin/forms", {
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-        });
-        if (!res.ok) {
-          const data = await res.json();
-          throw new Error(data.error || "Failed to fetch forms");
+    let timeout: NodeJS.Timeout;
+    let attempts = 0;
+    function checkTokenAndFetch() {
+      const token =
+        typeof window !== "undefined"
+          ? localStorage.getItem("admin-token")
+          : null;
+      if (!token) {
+        if (attempts < 10) {
+          attempts++;
+          timeout = setTimeout(checkTokenAndFetch, 100);
+          return;
+        } else {
+          router.replace("/admin/login");
+          return;
         }
-        const data = await res.json();
-        setForms(data.forms || []);
-      } catch (err: any) {
-        setError(err.message || "Failed to fetch forms");
-      } finally {
-        setLoading(false);
       }
+      async function fetchForms() {
+        setLoading(true);
+        setError("");
+        try {
+          const res = await fetch("/api/admin/forms", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.error || "Failed to fetch forms");
+          }
+          const data = await res.json();
+          setForms(data.forms || []);
+        } catch (err: any) {
+          setError(err.message || "Failed to fetch forms");
+        } finally {
+          setLoading(false);
+        }
+      }
+      fetchForms();
     }
-    fetchForms();
-  }, []);
+    checkTokenAndFetch();
+    return () => clearTimeout(timeout);
+  }, [router]);
 
   return (
     <div className="p-8 max-w-2xl mx-auto">

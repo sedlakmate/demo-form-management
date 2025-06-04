@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function AdminLoginPage() {
@@ -11,7 +11,7 @@ export default function AdminLoginPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    const res = await fetch("/api/admin/login", {
+    const res = await fetch("/api/admin/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -19,10 +19,14 @@ export default function AdminLoginPage() {
     if (res.ok) {
       const data = await res.json();
       if (data.token) {
-        localStorage.setItem("admin-auth", "true");
         localStorage.setItem("admin-token", data.token);
+        // Wait for localStorage to be set before redirecting
+        setTimeout(() => {
+          router.push("/admin/forms");
+        }, 100);
+        return;
       }
-      router.push("/admin/forms");
+      setError("No token received");
     } else {
       const data = await res.json();
       setError(data.error || "Login failed");

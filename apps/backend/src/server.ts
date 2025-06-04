@@ -14,7 +14,7 @@ export const createServer = (): Express => {
     .use(urlencoded({ extended: true }))
     .use(json())
     .use(cors())
-    .use("/admin/auth", adminAuthRouter)
+    .use("/api/admin/auth", adminAuthRouter)
     .use("/admin/form", adminFormRouter)
     .use("/public/form", publicFormRouter)
     .get("/status", (req: Request, res: Response) => {
