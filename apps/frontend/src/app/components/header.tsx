@@ -9,17 +9,26 @@ export function Header() {
   const [hasToken, setHasToken] = useState(false);
 
   useEffect(() => {
-    setHasToken(
-      typeof window !== "undefined" && !!localStorage.getItem("admin-token"),
-    );
-    const onStorage = () => setHasToken(!!localStorage.getItem("admin-token"));
+    function checkToken() {
+      setHasToken(
+        typeof window !== "undefined" && !!localStorage.getItem("admin-token"),
+      );
+    }
+    checkToken();
+    const onStorage = () => checkToken();
     window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+    // Listen for custom event in case localStorage is set in the same tab
+    window.addEventListener("admin-token-changed", checkToken);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("admin-token-changed", checkToken);
+    };
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("admin-token");
     setHasToken(false);
+    window.dispatchEvent(new Event("admin-token-changed"));
     router.push("/admin/login");
   };
 

@@ -67,12 +67,9 @@ describe("Public Form API", () => {
     const res = await request(app)
       .post(`/public/form/${form.token}/submit`)
       .send({
-        responses: [
-          {
-            field: { connect: { id: field.id } },
-            value: "Test Response",
-          },
-        ],
+        response: {
+          [field.id]: "Test Response",
+        },
       });
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty("message");

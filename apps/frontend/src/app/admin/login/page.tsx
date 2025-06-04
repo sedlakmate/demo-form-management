@@ -20,6 +20,7 @@ export default function AdminLoginPage() {
       const data = await res.json();
       if (data.token) {
         localStorage.setItem("admin-token", data.token);
+        window.dispatchEvent(new Event("admin-token-changed"));
         // Wait for localStorage to be set before redirecting
         setTimeout(() => {
           router.push("/admin/forms");
