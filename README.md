@@ -1,5 +1,5 @@
 # Admin Form Demo App
-[![CI](https://github.com/szedlakmate/demo-form-management/actions/workflows/ci.yml/badge.svg)](https://github.com/szedlakmate/demo-form-management/actions/workflows/pr-qa.yml)
+[![QA Workflow](https://github.com/szedlakmate/demo-form-management/actions/workflows/ci.yml/badge.svg)](https://github.com/szedlakmate/demo-form-management/actions/workflows/pr-qa.yml/badge.svg)
 
 A form builder full-stack app built with Next.js, Express, Prisma, and PostgreSQL.
 
