@@ -45,9 +45,8 @@ export async function listResponsesByForm(formId: string): Promise<Response[]> {
 
 export async function createResponseForFormToken(
   token: string,
-  data: CreateResponseInput,
-): Promise<Response> {
-  // Get the form and its sections/fields
+  data: Record<string, string>,
+): Promise<Response[]> {
   const form = await prisma.form.findUniqueOrThrow({
     where: { token },
     include: {
@@ -56,14 +55,27 @@ export async function createResponseForFormToken(
       },
     },
   });
-  // Collect all field IDs for this form
+
   const allowedFieldIds = form.sections.flatMap((section) =>
     section.fields.map((field) => field.id),
   );
-  // Only allow if the fieldId is part of the form
-  const fieldId = data.field?.connect?.id;
-  if (!fieldId || !allowedFieldIds.includes(fieldId)) {
-    throw new Error("Field does not belong to this form.");
+
+  const submittedFieldIds = Object.keys(data);
+  for (const fieldId of submittedFieldIds) {
+    if (!allowedFieldIds.includes(fieldId)) {
+      throw new Error(`Field does not belong to this form: ${fieldId}`);
+    }
   }
-  return createResponse(data);
+
+  const responses = await Promise.all(
+    submittedFieldIds.map((fieldId) =>
+      prisma.response.create({
+        data: {
+          field: { connect: { id: fieldId } },
+          value: data[fieldId],
+        },
+      }),
+    ),
+  );
+  return responses;
 }
