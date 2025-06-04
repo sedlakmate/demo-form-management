@@ -3,7 +3,6 @@ import { PrismaClient, Prisma, Field } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export type CreateFieldInput = Prisma.FieldCreateInput;
-export type UpdateFieldInput = Prisma.FieldUpdateInput;
 
 export async function createField(
   data: CreateFieldInput,
@@ -14,13 +13,6 @@ export async function createField(
 
 export async function getFieldById(id: string): Promise<Field | null> {
   return prisma.field.findUnique({ where: { id } });
-}
-
-export async function updateField(
-  id: string,
-  data: UpdateFieldInput,
-): Promise<Field> {
-  return prisma.field.update({ where: { id }, data });
 }
 
 export async function deleteField(id: string): Promise<Field> {

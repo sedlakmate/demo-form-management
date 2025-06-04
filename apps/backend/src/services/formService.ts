@@ -1,6 +1,5 @@
 import { Form, Prisma, PrismaClient } from "@prisma/client";
 import { createSection } from "./sectionService";
-import { createField } from "./fieldService";
 
 const prisma = new PrismaClient();
 
@@ -32,6 +31,10 @@ export type FormWithSections = Prisma.FormGetPayload<{
 export async function createForm(
   data: CreateFormWithSectionsInput,
 ): Promise<FormWithSections> {
+  // Validation: must have at least one section
+  if (!data.sections || data.sections.length === 0) {
+    throw new Error("A form must have at least one section.");
+  }
   try {
     return await prisma.$transaction(async (tx) => {
       const form = await tx.form.create({
@@ -40,25 +43,23 @@ export async function createForm(
         },
       });
       for (const sectionData of data.sections) {
-        const section = await createSection(
+        await createSection(
           {
             title: sectionData.title,
             order: sectionData.order,
             form: { connect: { id: form.id } },
           },
+          sectionData.fields?.map(
+            ({ label, type, required, order, default: def }) => ({
+              label,
+              type,
+              required,
+              order,
+              default: def,
+            }),
+          ) || [],
           tx,
         );
-        if (sectionData.fields) {
-          for (const fieldData of sectionData.fields) {
-            await createField(
-              {
-                ...fieldData,
-                section: { connect: { id: section.id } },
-              },
-              tx,
-            );
-          }
-        }
       }
       return tx.form.findUniqueOrThrow({
         where: { id: form.id },
@@ -105,6 +106,34 @@ export async function deleteForm(id: string): Promise<Form> {
   return prisma.form.delete({ where: { id } });
 }
 
+export async function deleteFormByToken(token: string): Promise<Form> {
+  return prisma.$transaction(async (tx) => {
+    const form = await tx.form.findUniqueOrThrow({
+      where: { token },
+      include: {
+        sections: {
+          include: {
+            fields: {
+              include: { responses: true },
+            },
+          },
+        },
+      },
+    });
+    // Check for any responses on any field
+    const hasResponses = form.sections.some((section) =>
+      section.fields.some(
+        (field) => field.responses && field.responses.length > 0,
+      ),
+    );
+    if (hasResponses) {
+      throw new Error("Cannot delete form: it has submitted responses.");
+    }
+    // Delete the form (cascades to sections/fields)
+    return tx.form.delete({ where: { token } });
+  });
+}
+
 export async function listForms(): Promise<FormWithSections[]> {
   return prisma.form.findMany({
     include: {
@@ -115,17 +144,4 @@ export async function listForms(): Promise<FormWithSections[]> {
       },
     },
   });
-}
-
-export async function updateForm(
-  id: string,
-  data: Partial<{ title: string }>,
-): Promise<FormWithSections> {
-  await prisma.form.update({
-    where: { id },
-    data: {
-      title: data.title,
-    },
-  });
-  return getFormById(id);
 }

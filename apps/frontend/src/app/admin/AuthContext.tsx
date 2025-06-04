@@ -16,12 +16,10 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // Initialize token synchronously from localStorage for immediate availability
   const [token, setTokenState] = useState<string | null>(
     typeof window !== "undefined" ? localStorage.getItem("admin-token") : null,
   );
 
-  // Keep useEffect for hydration safety (in case of SSR mismatch)
   useEffect(() => {
     const stored = localStorage.getItem("admin-token");
     if (stored !== token) setTokenState(stored);
