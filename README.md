@@ -67,3 +67,22 @@ To run linting, type checking, and tests for all packages in one command:
 turbo run check
 ```
 
+## Playwright E2E in Docker
+
+To run Playwright end-to-end tests using Docker Compose (recommended):
+
+```sh
+docker-compose run --rm playwright
+```
+
+This will:
+- Start the Playwright container with all dependencies and browsers
+- Use Docker's internal networking to access your frontend and backend services
+
+If you want to run all services (including Playwright) together:
+
+```sh
+docker-compose up
+```
+
+Playwright will automatically run the tests and exit.

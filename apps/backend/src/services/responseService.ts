@@ -26,23 +26,6 @@ export async function deleteResponse(id: string): Promise<Response> {
   return prisma.response.delete({ where: { id } });
 }
 
-export async function listResponsesByForm(formId: string): Promise<Response[]> {
-  // Find all fields belonging to sections of the given form
-  const fields = await prisma.field.findMany({
-    where: {
-      section: {
-        formId,
-      },
-    },
-    select: { id: true },
-  });
-  const fieldIds = fields.map((f) => f.id);
-  if (fieldIds.length === 0) return [];
-  return prisma.response.findMany({
-    where: { fieldId: { in: fieldIds } },
-  });
-}
-
 export async function createResponseForFormToken(
   token: string,
   data: Record<string, string>,
