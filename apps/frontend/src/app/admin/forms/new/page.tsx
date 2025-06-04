@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface Field {
@@ -68,6 +68,20 @@ export default function FormCraftingPage() {
     );
   }
 
+  function removeField(sectionId: string, fieldId: string) {
+    setSections(
+      sections.map((s) =>
+        s.id === sectionId
+          ? { ...s, fields: s.fields.filter((f) => f.id !== fieldId) }
+          : s,
+      ),
+    );
+  }
+
+  function removeSection(sectionId: string) {
+    setSections(sections.filter((s) => s.id !== sectionId));
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const token =
@@ -87,7 +101,7 @@ export default function FormCraftingPage() {
         fields: section.fields.map((field, fidx) => ({
           label: field.name,
           type: field.type.toUpperCase(),
-          required: true, // or add a UI for this
+          required: true,
           order: fidx + 1,
           default: "",
         })),
@@ -136,24 +150,30 @@ export default function FormCraftingPage() {
           {sections.length === 0 && (
             <div className="text-gray-400">No sections yet.</div>
           )}
-          {sections.map((section, idx) => (
+          {sections.map((section) => (
             <div
               key={section.id}
               className="mb-4 p-4 bg-base-100 rounded shadow"
             >
-              <div className="mb-2">
+              <div className="mb-2 flex items-center justify-between">
                 <label className="block text-sm font-medium mb-1">
                   Section Title
                 </label>
-                <input
-                  className="input input-bordered w-full"
-                  value={section.title}
-                  onChange={(e) =>
-                    updateSectionTitle(section.id, e.target.value)
-                  }
-                  required
-                />
+                <button
+                  type="button"
+                  className="btn btn-xs btn-error ml-2"
+                  title="Remove section"
+                  onClick={() => removeSection(section.id)}
+                >
+                  X
+                </button>
               </div>
+              <input
+                className="input input-bordered w-full"
+                value={section.title}
+                onChange={(e) => updateSectionTitle(section.id, e.target.value)}
+                required
+              />
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-sm font-semibold">Fields</span>
@@ -168,8 +188,8 @@ export default function FormCraftingPage() {
                 {section.fields.length === 0 && (
                   <div className="text-gray-400 text-xs">No fields yet.</div>
                 )}
-                {section.fields.map((field, fidx) => (
-                  <div key={field.id} className="flex gap-2 mb-2">
+                {section.fields.map((field) => (
+                  <div key={field.id} className="flex gap-2 mb-2 items-center">
                     <input
                       className="input input-bordered input-sm flex-1"
                       placeholder="Field Name"
@@ -199,6 +219,14 @@ export default function FormCraftingPage() {
                       <option value="text">Text</option>
                       <option value="number">Number</option>
                     </select>
+                    <button
+                      type="button"
+                      className="btn btn-xs btn-error"
+                      title="Remove field"
+                      onClick={() => removeField(section.id, field.id)}
+                    >
+                      X
+                    </button>
                   </div>
                 ))}
               </div>

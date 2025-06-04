@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface Field {
@@ -100,7 +100,7 @@ export default function FormCraftingPage() {
           {sections.length === 0 && (
             <div className="text-gray-400">No sections yet.</div>
           )}
-          {sections.map((section, idx) => (
+          {sections.map((section) => (
             <div
               key={section.id}
               className="mb-4 p-4 bg-base-100 rounded shadow"
@@ -132,7 +132,7 @@ export default function FormCraftingPage() {
                 {section.fields.length === 0 && (
                   <div className="text-gray-400 text-xs">No fields yet.</div>
                 )}
-                {section.fields.map((field, fidx) => (
+                {section.fields.map((field) => (
                   <div key={field.id} className="flex gap-2 mb-2">
                     <input
                       className="input input-bordered input-sm flex-1"

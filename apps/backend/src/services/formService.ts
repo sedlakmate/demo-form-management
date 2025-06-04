@@ -108,7 +108,6 @@ export async function deleteForm(id: string): Promise<Form> {
 
 export async function deleteFormByToken(token: string): Promise<Form> {
   return prisma.$transaction(async (tx) => {
-    // Find the form and its sections/fields
     const form = await tx.form.findUniqueOrThrow({
       where: { token },
       include: {
