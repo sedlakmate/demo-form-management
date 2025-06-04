@@ -1,9 +1,28 @@
 import request from "supertest";
 import { createServer } from "../../server";
 import { PrismaClient } from "@prisma/client";
+import { validateAdmin } from "../../lib/auth";
 
 const app = createServer();
 const prisma = new PrismaClient();
+let adminToken: string;
+
+beforeAll(async () => {
+  // Clean up and create a test admin user
+  await prisma.user.deleteMany({});
+  const email = "admin@example.com";
+  const password = "testpassword";
+  await prisma.user.create({
+    data: {
+      email,
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      password: await require("bcrypt").hash(password, 10),
+      role: "ADMIN",
+      name: "Test Admin",
+    },
+  });
+  adminToken = (await validateAdmin(email, password))!;
+});
 
 describe("Admin Form API", () => {
   beforeEach(async () => {
@@ -22,6 +41,7 @@ describe("Admin Form API", () => {
   it("should create a new form", async () => {
     const res = await request(app)
       .post("/admin/form")
+      .set("Authorization", `Bearer ${adminToken}`)
       .send({
         title: "Test Form",
         sections: [
@@ -54,7 +74,9 @@ describe("Admin Form API", () => {
         sections: { create: [] },
       },
     });
-    const res = await request(app).get("/admin/form");
+    const res = await request(app)
+      .get("/admin/form")
+      .set("Authorization", `Bearer ${adminToken}`);
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body.length).toBeGreaterThan(0);
@@ -67,7 +89,9 @@ describe("Admin Form API", () => {
         sections: { create: [] },
       },
     });
-    const res = await request(app).get(`/admin/form/${form.id}`);
+    const res = await request(app)
+      .get(`/admin/form/${form.id}`)
+      .set("Authorization", `Bearer ${adminToken}`);
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty("id", form.id);
   });
@@ -81,6 +105,7 @@ describe("Admin Form API", () => {
     });
     const res = await request(app)
       .put(`/admin/form/${form.id}`)
+      .set("Authorization", `Bearer ${adminToken}`)
       .send({ title: "Updated Title" });
     expect(res.status).toBe(200);
     expect(res.body.title).toBe("Updated Title");
@@ -93,7 +118,9 @@ describe("Admin Form API", () => {
         sections: { create: [] },
       },
     });
-    const res = await request(app).delete(`/admin/form/${form.id}`);
+    const res = await request(app)
+      .delete(`/admin/form/${form.id}`)
+      .set("Authorization", `Bearer ${adminToken}`);
     expect(res.status).toBe(200);
     expect(res.body.id).toBe(form.id);
   });

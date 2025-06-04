@@ -25,3 +25,6 @@ router.post(
 );
 
 export default router;
+
+// Also export as /api/admin/auth/login for Next.js API proxy compatibility
+module.exports = router;

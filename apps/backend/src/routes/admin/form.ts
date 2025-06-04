@@ -1,8 +1,11 @@
 import express from "express";
 import * as formService from "../../services/formService";
 import { asyncHandler } from "../../lib/asyncHandler";
+import { requireAdminAuth } from "../../lib/auth";
 
 const router = express.Router();
+
+router.use(requireAdminAuth);
 
 // Create a new form
 router.post(

@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { prisma } from "../prisma";
+import { RequestHandler } from "express";
 
 const JWT_SECRET = process.env.JWT_SECRET || "default_fallback";
 
@@ -36,3 +37,21 @@ export function verifyToken(
     return null;
   }
 }
+
+export const requireAdminAuth: RequestHandler = (req, res, next): void => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    res.status(401).json({ error: "Missing or invalid Authorization header" });
+    return;
+  }
+  const token = authHeader.replace("Bearer ", "");
+  const payload = verifyToken(token);
+  if (!payload || payload.role !== "ADMIN") {
+    res.status(401).json({ error: "Invalid or expired token" });
+    return;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (req as any).user = payload;
+  next();
+  return;
+};
