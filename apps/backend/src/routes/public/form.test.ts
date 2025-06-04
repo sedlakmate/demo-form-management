@@ -10,7 +10,6 @@ describe("Public Form API", () => {
   let form: Form;
 
   beforeEach(async () => {
-    // Clean DB and seed a form with a token
     await prisma.response.deleteMany();
     await prisma.response.deleteMany();
     await prisma.field.deleteMany();

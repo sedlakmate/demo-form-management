@@ -1,0 +1,14 @@
+FROM mcr.microsoft.com/playwright:v1.52.0-jammy
+
+WORKDIR /app
+
+COPY . .
+
+# Install all dependencies from the root
+RUN npm install --omit=dev
+
+RUN npx playwright install
+
+WORKDIR /app/apps/frontend
+
+CMD ["npx", "playwright", "test"]

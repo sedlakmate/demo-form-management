@@ -61,6 +61,17 @@ export default function AdminFormsPage() {
   return (
     <div className="p-8 max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Form Management</h1>
+      <button
+        className="btn btn-secondary mb-6"
+        onClick={() => {
+          localStorage.removeItem("admin-token");
+          window.dispatchEvent(new Event("admin-token-changed"));
+          router.replace("/admin/login");
+        }}
+        type="button"
+      >
+        Logout
+      </button>
       {loading && <div>Loading forms...</div>}
       {error && <div className="text-error mb-4">{error}</div>}
       {!loading && !error && (

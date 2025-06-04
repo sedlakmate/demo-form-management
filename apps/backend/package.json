@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
+    "@playwright/test": "^1.52.0",
     "@repo/eslint-config": "*",
     "@repo/jest-presets": "*",
     "@repo/typescript-config": "*",
@@ -54,6 +55,7 @@
     "eslint": "^8.57.0",
     "jest": "^29.7.0",
     "nodemon": "^3.1.0",
+    "playwright": "^1.52.0",
     "prisma": "^6.8.2",
     "supertest": "^6.3.3",
     "typescript": "5.8.3"

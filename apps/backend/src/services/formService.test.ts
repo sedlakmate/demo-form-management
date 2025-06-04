@@ -29,7 +29,6 @@ describe("formService", () => {
   let seededFormId: string;
 
   beforeEach(async () => {
-    // Clean up all tables before each test for isolation
     await prisma.response.deleteMany();
     await prisma.field.deleteMany();
     await prisma.section.deleteMany();
@@ -107,7 +106,7 @@ describe("formService", () => {
   it("should delete a form", async () => {
     const deleted = await formService.deleteForm(seededFormId);
     expect(deleted.id).toBe(seededFormId);
-    // Should not find the form anymore
+
     await expect(formService.getFormById(seededFormId)).rejects.toThrow();
   });
 });

@@ -13,7 +13,7 @@
     },
     "lint": {
       "dependsOn": ["^build"],
-      "env": ["BACKEND_URL"]
+      "env": ["BACKEND_URL", "E2E_BASE_URL"]
     },
     "type-check": {
       "dependsOn": ["^build"]

@@ -41,16 +41,22 @@ export default function AdminLoginPage() {
         className="bg-base-100 p-8 rounded shadow w-full max-w-sm"
       >
         <h1 className="text-2xl font-bold mb-6 text-center">Admin Login</h1>
-        <label className="block mb-2 font-semibold">Email</label>
+        <label htmlFor="admin-email" className="block mb-2 font-semibold">
+          Email
+        </label>
         <input
+          id="admin-email"
           type="email"
           className="input input-bordered w-full mb-4"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <label className="block mb-2 font-semibold">Password</label>
+        <label htmlFor="admin-password" className="block mb-2 font-semibold">
+          Password
+        </label>
         <input
+          id="admin-password"
           type="password"
           className="input input-bordered w-full mb-4"
           value={password}

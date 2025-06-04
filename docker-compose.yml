@@ -48,6 +48,20 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 
+  playwright:
+    build:
+      context: .
+      dockerfile: Dockerfile.playwright
+    depends_on:
+      - frontend
+    environment:
+      - E2E_BASE_URL=http://frontend:3000
+    networks:
+      - app_network
+    volumes:
+      - ./apps/frontend:/app/apps/frontend
+    command: ["npx", "playwright", "test"]
+
 volumes:
   db_data:
 
