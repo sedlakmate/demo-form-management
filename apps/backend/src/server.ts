@@ -17,12 +17,12 @@ export const createServer = (): Express => {
     .use("/api/admin/auth", adminAuthRouter)
     .use("/admin/form", adminFormRouter)
     .use("/public/form", publicFormRouter)
-    .get("/status", (req: Request, res: Response) => {
+    .get("/status", (_req: Request, res: Response) => {
       res.json({ ok: true });
     });
 
-  // Global error handler to always return JSON
-  app.use((err: any, req: Request, res: Response, next: Function) => {
+  // eslint-disable-next-line
+  app.use((err: any, _req: Request, res: Response, _next: Function) => {
     const status = err.status || 500;
     res.status(status).json({ error: err.message || "Internal Server Error" });
   });

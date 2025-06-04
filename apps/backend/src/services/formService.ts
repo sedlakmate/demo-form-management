@@ -1,6 +1,5 @@
 import { Form, Prisma, PrismaClient } from "@prisma/client";
 import { createSection } from "./sectionService";
-import { createField } from "./fieldService";
 
 const prisma = new PrismaClient();
 
@@ -36,12 +35,6 @@ export async function createForm(
   if (!data.sections || data.sections.length === 0) {
     throw new Error("A form must have at least one section.");
   }
-  // Validation: each section must have at least one field
-  for (const section of data.sections) {
-    if (!section.fields || section.fields.length === 0) {
-      throw new Error("Each section must have at least one field.");
-    }
-  }
   try {
     return await prisma.$transaction(async (tx) => {
       const form = await tx.form.create({
@@ -50,25 +43,23 @@ export async function createForm(
         },
       });
       for (const sectionData of data.sections) {
-        const section = await createSection(
+        await createSection(
           {
             title: sectionData.title,
             order: sectionData.order,
             form: { connect: { id: form.id } },
           },
+          sectionData.fields?.map(
+            ({ label, type, required, order, default: def }) => ({
+              label,
+              type,
+              required,
+              order,
+              default: def,
+            }),
+          ) || [],
           tx,
         );
-        if (sectionData.fields) {
-          for (const fieldData of sectionData.fields) {
-            await createField(
-              {
-                ...fieldData,
-                section: { connect: { id: section.id } },
-              },
-              tx,
-            );
-          }
-        }
       }
       return tx.form.findUniqueOrThrow({
         where: { id: form.id },
