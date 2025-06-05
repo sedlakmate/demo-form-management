@@ -4,4 +4,4 @@ dockerfilePath = "apps/backend/Dockerfile"
 dockerBuildTarget = "runner"
 
 [deploy]
-startCommand = "yarn workspace backend db:prepare && yarn workspace backend start"
+startCommand = "yarn workspace backend db:prepare && node /app/apps/backend/dist/index.js"

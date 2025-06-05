@@ -3,10 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   const { email, password } = await req.json();
   try {
-    const backendUrl = process.env.BACKEND_URL;
+    const backendUrl = process.env.NEXT_PUBLIC_API_HOST;
     if (!backendUrl) {
       return NextResponse.json(
-        { error: "BACKEND_URL is not set" },
+        { error: "NEXT_PUBLIC_API_HOST is not set" },
         { status: 500 },
       );
     }

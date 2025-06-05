@@ -4,6 +4,10 @@
 A form builder full-stack app built with Next.js, Express, Prisma, and PostgreSQL.
 
 ## Live Demo
+### Production version
+At the moment, the production version of the application is not available.
+
+### Development version
 A live demo of the application is available at [https://demo-form-management-production.up.railway.app](https://demo-form-management-production.up.railway.app).
 
 ## Goal

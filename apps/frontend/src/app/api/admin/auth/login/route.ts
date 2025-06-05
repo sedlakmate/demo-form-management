@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
-  const backendUrl = process.env.BACKEND_URL;
+  const backendUrl = process.env.NEXT_PUBLIC_API_HOST;
   if (!backendUrl) {
     return new NextResponse(
       JSON.stringify({ error: "Backend URL not configured" }),

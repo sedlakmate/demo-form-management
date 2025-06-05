@@ -5,7 +5,7 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**", "public/dist/**"],
       "dependsOn": ["^build"],
-      "env": ["NEXT_PUBLIC_API_HOST", "BACKEND_URL"]
+      "env": ["NEXT_PUBLIC_API_HOST"]
     },
     "test": {
       "outputs": ["coverage/**"],
@@ -13,7 +13,7 @@
     },
     "lint": {
       "dependsOn": ["^build"],
-      "env": ["BACKEND_URL", "E2E_BASE_URL"]
+      "env": ["NEXT_PUBLIC_API_HOST", "E2E_BASE_URL"]
     },
     "type-check": {
       "dependsOn": ["^build"]
@@ -21,7 +21,7 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": ["BACKEND_URL"]
+      "env": ["NEXT_PUBLIC_API_HOST"]
     },
     "clean": {
       "cache": false
@@ -32,7 +32,7 @@
       "cache": false,
       "persistent": false,
       "inputs": ["$TURBO_DEFAULT$"],
-      "env": ["BACKEND_URL", "NEXT_PUBLIC_API_HOST"]
+      "env": ["NEXT_PUBLIC_API_HOST"]
     }
   }
 }
