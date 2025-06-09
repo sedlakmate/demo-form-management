@@ -4,4 +4,4 @@ dockerfilePath = "apps/backend/Dockerfile"
 dockerBuildTarget = "runner"
 
 [deploy]
-startCommand = "yarn start:with-db-preparation"
+startCommand = "yarn workspace backend start:with-db-preparation"
