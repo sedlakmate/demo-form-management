@@ -1,17 +1,16 @@
 # Admin Form Demo App
-[![QA Workflow](https://github.com/szedlakmate/demo-form-management/actions/workflows/ci.yml/badge.svg)](https://github.com/szedlakmate/demo-form-management/actions/workflows/pr-qa.yml/badge.svg)
+![QA Workflow](https://github.com/szedlakmate/demo-form-management/actions/workflows/pr-qa.yml/badge.svg)
 
 A form builder full-stack app built with Next.js, Express, Prisma, and PostgreSQL.
 
 ## Live Demo
-Live demo of the application is available on Railway
+Live demo of the application is available on Railway:
 
-### Production
-[https://form-management-demo.up.railway.app](https://form-management-demo.up.railway.app).
+#### Production
+[https://form-management-demo.up.railway.app](https://form-management-demo.up.railway.app)
 
-### Development
-[https://form-management-demo-development.up.railway.app](https://form-management-demo-development.up.railway.app).
-
+#### Development
+[https://form-management-demo-development.up.railway.app](https://form-management-demo-development.up.railway.app)
 
 
 ## Goal
