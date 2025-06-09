@@ -4,7 +4,15 @@
 A form builder full-stack app built with Next.js, Express, Prisma, and PostgreSQL.
 
 ## Live Demo
-A live demo of the application is available at [https://demo-form-management-production.up.railway.app](https://demo-form-management-production.up.railway.app).
+Live demo of the application is available on Railway
+
+### Production
+[https://form-management-demo.up.railway.app](https://form-management-demo.up.railway.app).
+
+### Development
+[https://form-management-demo-development.up.railway.app](https://form-management-demo-development.up.railway.app).
+
+
 
 ## Goal
 The goal of this project is to create a simple form builder application that allows an admin user to create forms with sections and fields, and a public user to fill out these forms without needing to log in.
