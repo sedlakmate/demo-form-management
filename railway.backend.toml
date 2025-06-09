@@ -4,4 +4,4 @@ dockerfilePath = "apps/backend/Dockerfile"
 dockerBuildTarget = "runner"
 
 [deploy]
-startCommand = "node /app/apps/backend/dist/index.js"
+startCommand = "node apps/backend/dist/index.js"
