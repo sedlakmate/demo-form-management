@@ -4,10 +4,10 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: { token: string } },
 ) {
-  const backendUrl = process.env.BACKEND_URL;
+  const backendUrl = process.env.NEXT_PUBLIC_API_HOST;
   if (!backendUrl) {
     return NextResponse.json(
-      { error: "BACKEND_URL is not set" },
+      { error: "NEXT_PUBLIC_API_HOST is not set" },
       { status: 500 },
     );
   }

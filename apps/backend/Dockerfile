@@ -9,21 +9,15 @@ RUN yarn global add turbo
 COPY . .
 RUN turbo prune backend --docker
 
-
 # ---- Installer stage ----
 FROM base AS installer
 WORKDIR /app
-
 COPY --from=builder /app/out/json/ .
-
-COPY --from=builder /app/out/full/ .
-
 RUN yarn install
 
+COPY --from=builder /app/out/full/ .
 RUN yarn workspace backend prisma generate
-
 RUN yarn workspace backend build
-
 
 # ---- Dev mode (uses volumes) ----
 FROM base AS dev
