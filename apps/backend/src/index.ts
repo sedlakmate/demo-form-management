@@ -1,3 +1,5 @@
+console.log("Executing backend index.ts...");
+
 import { createServer } from "./server";
 
 const port = process.env.PORT || 3001;

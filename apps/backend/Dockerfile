@@ -36,5 +36,6 @@ ENV NODE_ENV=production
 ENV YARN_CACHE_FOLDER=/tmp/.yarn-cache
 COPY --from=installer --chown=1001:1001 /app .
 USER 1001
+RUN ls -l apps/backend/dist
 
 CMD ["node", "apps/backend/dist/index.js"]
